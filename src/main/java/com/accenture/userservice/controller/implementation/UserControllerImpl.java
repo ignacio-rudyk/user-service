@@ -1,6 +1,10 @@
 package com.accenture.userservice.controller.implementation;
 
 import com.accenture.userservice.controller.UserController;
+import com.accenture.userservice.exception.UserInexistentException;
+import com.accenture.userservice.exception.UserServiceException;
+import com.accenture.userservice.exception.ValidationException;
+import com.accenture.userservice.model.ErrorResponse;
 import com.accenture.userservice.model.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,36 +20,78 @@ public class UserControllerImpl implements UserController {
     private UserService userService;
 
     @Override
-    public ResponseEntity<UserDTO> createUser(UserDTO newUser) {
-        UserDTO userSaved = userService.saveUser(newUser);
-        return new ResponseEntity<UserDTO>(userSaved,HttpStatus.OK);
+    public ResponseEntity<ErrorResponse> createUser(UserDTO newUser) {
+        try{
+            UserDTO userSaved = userService.saveUser(newUser);
+            ErrorResponse errorResponse = new ErrorResponse(userSaved);
+            return new ResponseEntity<ErrorResponse>(errorResponse,HttpStatus.CREATED);
+        } catch (ValidationException e) {
+            return new ResponseEntity<ErrorResponse>(new ErrorResponse(e.getCode(), e.getMessage()),HttpStatus.BAD_REQUEST);
+        } catch (UserServiceException e) {
+            return new ResponseEntity<ErrorResponse>(new ErrorResponse(e.getCode(), e.getMessage()),HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Throwable e) {
+            return new ResponseEntity<ErrorResponse>(new ErrorResponse(-1, e.getMessage()),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
-    public ResponseEntity<String> removeUser(Long id) {
-        userService.delete(id);
-        ResponseEntity<String> response = new ResponseEntity<String>(HttpStatus.OK);
-        return response;
+    public ResponseEntity<ErrorResponse> removeUser(Long id) {
+        try {
+            UserDTO userDeleted = userService.delete(id);
+            ErrorResponse errorResponse = new ErrorResponse(userDeleted);
+            return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.OK);
+        } catch (UserInexistentException e) {
+            return new ResponseEntity<ErrorResponse>(new ErrorResponse(e.getCode(), e.getMessage()),HttpStatus.NO_CONTENT);
+        } catch (ValidationException e) {
+            return new ResponseEntity<ErrorResponse>(new ErrorResponse(e.getCode(), e.getMessage()),HttpStatus.BAD_REQUEST);
+        } catch (UserServiceException e) {
+            return new ResponseEntity<ErrorResponse>(new ErrorResponse(e.getCode(), e.getMessage()),HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Throwable e) {
+            return new ResponseEntity<ErrorResponse>(new ErrorResponse(-1, e.getMessage()),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
-    public ResponseEntity<UserDTO> getUser(Long id) {
-        UserDTO result = userService.findById(id);
-        return new ResponseEntity<UserDTO>(result, HttpStatus.OK);
+    public ResponseEntity<ErrorResponse> getUser(Long id) {
+        try{
+            UserDTO userFound = userService.findById(id);
+            ErrorResponse errorResponse = new ErrorResponse(userFound);
+            return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.OK);
+        } catch (UserInexistentException e) {
+            return new ResponseEntity<ErrorResponse>(new ErrorResponse(e.getCode(), e.getMessage()),HttpStatus.NO_CONTENT);
+        } catch (ValidationException e) {
+            return new ResponseEntity<ErrorResponse>(new ErrorResponse(e.getCode(), e.getMessage()),HttpStatus.BAD_REQUEST);
+        } catch (UserServiceException e) {
+            return new ResponseEntity<ErrorResponse>(new ErrorResponse(e.getCode(), e.getMessage()),HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Throwable e) {
+            return new ResponseEntity<ErrorResponse>(new ErrorResponse(-1, e.getMessage()),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
-    public ResponseEntity<Boolean> existUser(Long id) {
-        Boolean result = userService.existsById(id);
-        ResponseEntity<Boolean> response = new ResponseEntity<Boolean>(result, HttpStatus.OK);
-        return response;
+    public ResponseEntity<ErrorResponse> existUser(Long id) {
+        try {
+            Boolean exist = userService.existsById(id);
+            ErrorResponse errorResponse = new ErrorResponse(exist);
+            return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.OK);
+        } catch (ValidationException e) {
+            return new ResponseEntity<ErrorResponse>(new ErrorResponse(e.getCode(), e.getMessage()),HttpStatus.BAD_REQUEST);
+        } catch (UserServiceException e) {
+            return new ResponseEntity<ErrorResponse>(new ErrorResponse(e.getCode(), e.getMessage()),HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Throwable e) {
+            return new ResponseEntity<ErrorResponse>(new ErrorResponse(-1, e.getMessage()),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
-    public ResponseEntity<List<UserDTO>> list() {
-        List<UserDTO> result = userService.list();
-        ResponseEntity<List<UserDTO>> response = new ResponseEntity<List<UserDTO>>(result, HttpStatus.OK);
-        return response;
+    public ResponseEntity<ErrorResponse> list() {
+        try {
+            List<UserDTO> userList = userService.list();
+            ErrorResponse errorResponse = new ErrorResponse(userList);
+            return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.OK);
+        }catch (Throwable e) {
+            return new ResponseEntity<ErrorResponse>(new ErrorResponse(-1, e.getMessage()),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }

@@ -1,24 +1,15 @@
 package com.accenture.userservice.exception;
 
-public class UserDAOException extends Exception{
+public class UserDAOException extends Exception {
 
-    private Integer code;
+    private static String USER_DAO_EXCEPTION = "Hubo un error al acceder a los datos";
 
-    public UserDAOException(Integer code) {
-        this.code = code;
+    public UserDAOException() {
+        this(USER_DAO_EXCEPTION);
     }
 
-    public UserDAOException(String message, Integer code) {
+    public UserDAOException(String message) {
         super(message);
-        this.code = code;
-    }
-
-    public Integer getCode() {
-        return code;
-    }
-
-    public void setCode(Integer code) {
-        this.code = code;
     }
 
 }

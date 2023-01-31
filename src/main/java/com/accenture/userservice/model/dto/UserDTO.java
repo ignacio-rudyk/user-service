@@ -18,6 +18,8 @@ public class UserDTO implements Serializable {
 
     private String password;
 
+    private Boolean isEnabled;
+
     public UserDTO() {
         super();
     }
@@ -70,6 +72,13 @@ public class UserDTO implements Serializable {
         this.password = password;
     }
 
+    public Boolean getIsEnabled() {
+        return isEnabled;
+    }
+
+    public void setIsEnabled(Boolean isEnabled) {
+        this.isEnabled = isEnabled;
+    }
 
     @Override
     public String toString() {
@@ -82,4 +91,5 @@ public class UserDTO implements Serializable {
                 ", password='" + password + '\'' +
                 '}';
     }
+
 }

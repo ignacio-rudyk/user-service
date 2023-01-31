@@ -26,9 +26,10 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    public User() {
-        super();
-    }
+    @Column(nullable = false)
+    private Boolean isEnabled;
+
+    public User() {super();    }
 
     public Long getId() {
         return id;
@@ -78,6 +79,13 @@ public class User {
         this.password = password;
     }
 
+    public Boolean getIsEnabled() {
+        return isEnabled;
+    }
+
+    public void setIsEnabled(Boolean isEnabled) {
+        this.isEnabled = isEnabled;
+    }
 
     @Override
     public String toString() {
@@ -88,8 +96,8 @@ public class User {
                 ", identityCardNumber='" + identityCardNumber + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", enabled=" + isEnabled +
                 '}';
     }
-
 
 }

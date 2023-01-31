@@ -4,8 +4,10 @@ public class UserServiceException extends Exception {
 
     private Integer code;
 
-    public UserServiceException(Integer code) {
-        this.code = code;
+    private static String USER_SERVICE_EXCEPTION = "Hubo un error en el servicio";
+
+    public UserServiceException() {
+        this(USER_SERVICE_EXCEPTION, -1);
     }
 
     public UserServiceException(String message, Integer code) {
