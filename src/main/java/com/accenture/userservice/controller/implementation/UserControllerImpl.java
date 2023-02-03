@@ -41,7 +41,7 @@ public class UserControllerImpl implements UserController {
             ErrorResponse errorResponse = new ErrorResponse(userDeleted);
             return new ResponseEntity<ErrorResponse>(errorResponse, HttpStatus.OK);
         } catch (UserInexistentException e) {
-            return new ResponseEntity<ErrorResponse>(new ErrorResponse(e.getCode(), e.getMessage()),HttpStatus.NO_CONTENT);
+            return new ResponseEntity<ErrorResponse>(new ErrorResponse(e.getCode(), e.getMessage()),HttpStatus.BAD_REQUEST);
         } catch (ValidationException e) {
             return new ResponseEntity<ErrorResponse>(new ErrorResponse(e.getCode(), e.getMessage()),HttpStatus.BAD_REQUEST);
         } catch (UserServiceException e) {

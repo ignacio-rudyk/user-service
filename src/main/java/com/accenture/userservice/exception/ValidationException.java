@@ -9,6 +9,7 @@ public class ValidationException extends UserServiceException {
     public ValidationException(){
         super(VALIDATION_EXCEPTION, CODE);
     }
+
     public ValidationException(String message, Integer code) {
         super(message, code);
     }

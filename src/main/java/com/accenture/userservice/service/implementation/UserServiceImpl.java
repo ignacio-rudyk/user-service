@@ -7,6 +7,7 @@ import com.accenture.userservice.exception.UserInexistentException;
 import com.accenture.userservice.exception.UserServiceException;
 import com.accenture.userservice.model.dto.UserDTO;
 import com.accenture.userservice.model.entities.User;
+import com.accenture.userservice.service.AccountService;
 import com.accenture.userservice.service.UserService;
 import org.dozer.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private Mapper mapper;
+
+    @Autowired
+    private AccountService accountService;
 
     @Override
     public UserDTO saveUser(UserDTO newUser) throws UserServiceException, UserDAOException {
@@ -51,11 +55,21 @@ public class UserServiceImpl implements UserService {
         if(id == null) {
             throw new FieldNullException();
         }
-        UserDTO user = findById(id);
-        User userDisabled = mapper.map(user, User.class);
-        userDisabled.setIsEnabled(Boolean.FALSE);
-        userDisabled = userDAO.save(userDisabled);
-        return mapper.map(userDisabled, UserDTO.class);
+        if(!existsById(id)){
+            throw new UserInexistentException();
+        }
+        try{
+            accountService.removeAccountsByUserId(id);
+            UserDTO user = findById(id);
+            User userDisabled = mapper.map(user, User.class);
+            userDisabled.setIsEnabled(Boolean.FALSE);
+            userDisabled = userDAO.save(userDisabled);
+            return mapper.map(userDisabled, UserDTO.class);
+        } catch (UserServiceException e) {
+            throw e;
+        } catch (Throwable t) {
+            throw t;
+        }
     }
 
     @Override
@@ -76,7 +90,12 @@ public class UserServiceImpl implements UserService {
         if(id == null) {
             throw new FieldNullException();
         }
-        return userDAO.existsById(id);
+        if(userDAO.existsById(id)) {
+            UserDTO userFound = findById(id);
+            return userFound.getIsEnabled();
+        } else {
+            return Boolean.FALSE;
+        }
     }
 
     @Override

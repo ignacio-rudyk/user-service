@@ -9,4 +9,5 @@ public class UserInexistentException extends UserServiceException {
     public UserInexistentException() {
         super(USER_INEXISTENT_EXCEPTION_MSG, CODE);
     }
+
 }
