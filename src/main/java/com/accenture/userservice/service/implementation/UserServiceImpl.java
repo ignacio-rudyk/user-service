@@ -10,6 +10,8 @@ import com.accenture.userservice.model.entities.User;
 import com.accenture.userservice.service.AccountService;
 import com.accenture.userservice.service.UserService;
 import org.dozer.Mapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private AccountService accountService;
 
+    private Logger logger = LoggerFactory.getLogger(UserService.class);
+
     @Override
     public UserDTO saveUser(UserDTO newUser) throws UserServiceException, UserDAOException {
         if(newUser != null) {
@@ -39,10 +43,13 @@ public class UserServiceImpl implements UserService {
                 user = userDAO.save(user);
                 return mapper.map(user, UserDTO.class);
             } catch (DataAccessException e) {
+                logger.error("[Error " + e.getClass() + "] " + e.getMessage());
                 throw new UserDAOException();
             } catch (UserServiceException e) {
+                logger.error("[Error " + e.getClass() + "] " + e.getMessage());
                 throw e;
             } catch (Throwable t) {
+                logger.error("[Error " + t.getClass() + "] " + t.getMessage());
                 throw t;
             }
         } else {
@@ -66,8 +73,10 @@ public class UserServiceImpl implements UserService {
             userDisabled = userDAO.save(userDisabled);
             return mapper.map(userDisabled, UserDTO.class);
         } catch (UserServiceException e) {
+            logger.error("[Error " + e.getClass() + "] " + e.getMessage());
             throw e;
         } catch (Throwable t) {
+            logger.error("[Error " + t.getClass() + "] " + t.getMessage());
             throw t;
         }
     }
@@ -115,7 +124,7 @@ public class UserServiceImpl implements UserService {
             } else {
                 return Boolean.TRUE;
             }
-        } catch (FieldNullException e){
+        } catch (FieldNullException e) {
             return Boolean.TRUE;
         }
     }
