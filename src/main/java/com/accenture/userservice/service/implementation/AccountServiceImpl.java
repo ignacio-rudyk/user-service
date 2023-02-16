@@ -1,6 +1,5 @@
 package com.accenture.userservice.service.implementation;
 
-import com.accenture.userservice.controller.UserController;
 import com.accenture.userservice.exception.UserServiceException;
 import com.accenture.userservice.model.ErrorResponse;
 import com.accenture.userservice.model.dto.AccountDTO;
@@ -8,7 +7,6 @@ import com.accenture.userservice.service.AccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -25,19 +23,16 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Value("${account.service.server.port}")
-    private String accountServicePort;
-
     private Logger logger = LoggerFactory.getLogger(AccountService.class);
 
-    private static String DOMAIN = "http://localhost:";
+    private static String DOMAIN = "http://account-service";
 
     private static String REMOVE_ACCOUNTS_BY_USER_ID_SERVICE = "/account/removeAccountsByUserId/";
 
     @Override
     public List<AccountDTO> removeAccountsByUserId(Long userId) throws UserServiceException {
         try{
-            String url = DOMAIN + accountServicePort + REMOVE_ACCOUNTS_BY_USER_ID_SERVICE + userId;
+            String url = DOMAIN + REMOVE_ACCOUNTS_BY_USER_ID_SERVICE + userId;
             restTemplate.setMessageConverters(getJsonMessageConverters());
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
